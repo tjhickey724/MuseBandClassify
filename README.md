@@ -31,3 +31,4 @@ using some number of clusters in a kmeans analysis
    * `analysisDemo`
 6. Adjust the k to see which value gives the best classification
 
+   ![MuseBand Classification Data](/bands.jpg "MuseBand k-means Classifcation")
