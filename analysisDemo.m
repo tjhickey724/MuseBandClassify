@@ -1,5 +1,5 @@
 % This produces five plots based on the number of clusters:
-numClusters = 10
+numClusters = 16
 
 % The top plot is the five bands for each of the 4 electrodes
 
@@ -30,32 +30,68 @@ musePlot(all);  % look at all data, select some
 
 % plot
 hold off;
-subplot(5,1,1);
+
+numg = 4;
+pos = 1;
+
+subplot(numg,1,pos); pos=pos+1;
 musePlot(all);grid on; grid minor;
 legend('alpha','beta','delta','gamma','theta');
-subplot(5,1,2);
+
+%{
+subplot(numg,1,pos); pos=pos+1;
 plot(C*0.2+0.5,'.b');grid on; grid minor;
-subplot(5,1,3);
+
+subplot(numg,1,pos); pos=pos+1;
 zz = clusterWindow(C,300);
 plot(zz);
 legend(string(1:max(C)));
 grid on; grid minor;
-subplot(5,1,4);
-a1= hist(C(1:3000),0.5:numClusters+0.5);
-a2= hist(C(3000:6000),0.5:numClusters+0.5);
-a3= hist(C(6000:9000),0.5:numClusters+0.5);
-a4= hist(C(9000:length(C)),0.5:numClusters+0.5);
+%}
+
+subplot(numg,1,pos); pos=pos+1;
+a1= hist(C(1:3000),0.5:numClusters-0.5);
+a2= hist(C(3000:6000),0.5:numClusters-0.5);
+a3= hist(C(6000:9000),0.5:numClusters-0.5);
+a4= hist(C(9000:length(C)),0.5:numClusters-0.5);
 aa = [a1;a2;a3;a4]';
 bar(aa); legend('math','relax1','reading','relax2');
-
-subplot(5,1,5);
+%{
+subplot(numg,1,pos); pos=pos+1;
 bar(aa'); legend(string([1:numClusters]));
+%}
 
 %vv = min(max(C),[1:max(C)]*(zz'==max(zz'))); % find which cluster is highest at each point
 %plot(vv,'.'); % this plots the cluster which is higest in the previous plot
 %legend(string(1:max(C)));
+subplot(numg,1,pos); pos=pos+1;
+
+ vv = (aa' == max(aa'));
+ numCC = 4;
+ dd = [1:numCC]*vv;
+ CC = dd(C);
+ c1= hist(CC(1:3000),0.5:numCC-0.5);
+c2= hist(CC(3000:6000),0.5:numCC-0.5);
+c3= hist(CC(6000:9000),0.5:numCC-0.5);
+c4= hist(CC(9000:length(CC)),0.5:numCC-0.5);
+ccs = [c1;c2;c3;c4]'./30;
+bar(ccs'); legend('math','relax1','reading','relax2');
+grid on;
+grid minor;
+axis([0,5,0,100])
 
 
+subplot(numg,1,pos); pos=pos+1;
+zz1 = clusterWindow(CC,300);
+plot(zz1);
+legend(string(1:max(CC)));
+grid on; grid minor;
 % look into analyzing data using pca(all) to see which
 % vectors have the most importance, and cluster on those??
+clusters = [1:numClusters]
+mathClusters = clusters(vv(1,:)==1)
+openClusters = clusters(vv(2,:)==1)
+readClusters = clusters(vv(3,:)==1)
+closedClusters = clusters(vv(4,:)==1)
+
 
