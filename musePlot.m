@@ -26,7 +26,9 @@ s=4;t=3;
     plot(t+data(:,s+8),'-c'); 
     plot(t+data(:,s+12),'-m'); 
     plot(t+data(:,s+16),'-g');
-
+title('Plot A: Five bands for four electrodes')
+grid on; grid minor;
+legend('alpha','beta','delta','gamma','theta');
 hold off;
 done = 1.0;
 end
