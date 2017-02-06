@@ -169,6 +169,8 @@ h.NodeLabel = sum(aa')
 colors = ['b','r','g','y'];
 figure(3)
 
+[coeff,score,latent,tsquared,explained,mu] = pca(all)
+
 %{
 for k = [1,2,3,4]
     theColor = string('-*')+string(colors(k));
