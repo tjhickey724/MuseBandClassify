@@ -169,7 +169,7 @@ h.NodeLabel = sum(aa')
 colors = ['b','r','g','y'];
 figure(3)
 
-[coeff,score,latent,tsquared,explained,mu] = pca(all)
+[coeff,score,latent,tsquared,explained,mu] = pca(all);
 
 %{
 for k = [1,2,3,4]
@@ -213,8 +213,7 @@ zlabel('pca3')
 grid on
 grid minor
 rotate3d on
-
-
+%{
 figure(4)
 for k=[1:4]
     subplot(3,2,k);scatter(score(CC==k,1),score(CC==k,2),colors(k)); 
@@ -264,4 +263,33 @@ scatter(score(6000:step:9000,1),score(6000:step:9000,3),colors(3));
 grid on; grid minor; axis([-1,1,-1,1]);
 title('PCA 1,3 projection of Predicted Activities')
 hold off
+%}
+
+
+figure(7);
+ZZ = zeros(100,20);
+data=ZZ;
+for k=[1:max(C)]
+    data = [data;all(C==k,:);ZZ];
+end
+musePlot(data);
+
+figure(8);
+data=ZZ;
+for k=mathClusters
+    data = [data;all(C==k,:);ZZ];
+end
+data = [data;ZZ;ZZ;ZZ;ZZ];
+for k=openClusters
+    data = [data;all(C==k,:);ZZ];
+end
+data = [data;ZZ;ZZ;ZZ;ZZ];
+for k=readClusters
+    data = [data;all(C==k,:);ZZ];
+end
+data = [data;ZZ;ZZ;ZZ;ZZ];
+for k=closedClusters
+    data = [data;all(C==k,:);ZZ];
+end
+musePlot(data);
 
