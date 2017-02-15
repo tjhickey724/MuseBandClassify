@@ -22,6 +22,7 @@ f1 = figure(1);
 % Here is the code ..
 % read in the data
 all = importdata('bands.txt',' ',0);
+all = all(500:length(all),:);
 all = all(:,2:21); % throw out the first parameter which is the time in seconds
 % select a section of 1000 observations from each
 musePlot(all);  % look at all data, select some
@@ -105,7 +106,8 @@ title('Plot C: Accuracy of k-means classification for each MORC region')
 subplot(numg,1,pos); pos=pos+1;
 zz1 = clusterWindow(CC,windowSize);
 plot(zz1./(windowSize/100));
-legend(string(1:max(CC)));
+%legend(string(1:max(CC)));
+legend('math','relax1','reading','relax2');
 grid on; grid minor;
 xticks([0:3000:12000])
 % look into analyzing data using pca(all) to see which
