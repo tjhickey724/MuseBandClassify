@@ -2,7 +2,7 @@
 
 numClusters = 12;
 
-windowSize = 600;
+windowSize = 100;
 
 
 

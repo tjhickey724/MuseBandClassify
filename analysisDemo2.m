@@ -43,7 +43,9 @@ pos = 1;
 subplot(numg,1,pos); pos=pos+1;
 musePlot(all);
 xticks([0:3000:12000])
-grid on; grid minor;
+grid on; 
+xticks([0:600:12000]);
+grid minor;
 legend('alpha','beta','delta','gamma','theta');
 
 
@@ -101,6 +103,18 @@ axis([0,5,0,100])
 title('Plot C: Accuracy of k-means classification for each MORC region')
 
 
+prob = (aa'./sum(aa'))'; %prob(c,i) = prob cluster c is in activity i
+
+pc=[]
+for i=[1:4]
+    di = prob(:,i);
+    pc(i,:) = di(C);
+end
+
+predictA=[]
+for i=[1:4]
+    predictA(i,:) = sum(pc(:,(i-1)*3000+300:i*3000-300)'/2400)
+end
 
 
 subplot(numg,1,pos); pos=pos+1;
@@ -132,7 +146,7 @@ end
 
 
 f2 = figure(2);
-coords= [aa(:,1)-0.7*aa(:,3),aa(:,2)-0.7*aa(:,3)];
+coords= [aa(:,1)-0.7*aa(:,3),aa(:,2)+aa(:,4)-0.7*aa(:,3)];
 
 Cutoff = 0;
 drawMM(aa,B,Cutoff);
@@ -183,7 +197,7 @@ end
 k=1; plot3(score(CC==k,1),score(CC==k,2),score(CC==k,3),'-*b'); hold on;
 k=2; plot3(score(CC==k,1),score(CC==k,2),score(CC==k,3),'-*r'); hold on;
 k=3; plot3(score(CC==k,1),score(CC==k,2),score(CC==k,3),'-*g'); hold on;
-k=4; plot3(score(CC==k,1),score(CC==k,2),score(CC==k,3),'-*y'); hold on;
+k=4; plot3(score(CC==k,1),score(CC==k,2),score(CC==k,3),'-*r'); hold on;
 hold off
 legend('math','openeye','reading','closedeye')
 title('PCA plots of four k-mean classifications')
@@ -205,16 +219,44 @@ ind=[indM;indC;indR;indO];
 plot3(score(indM,1),score(indM,2),score(indM,3),'-*b'); hold on;
 plot3(score(indC,1),score(indC,2),score(indC,3),'-*r'); hold on;
 plot3(score(indR,1),score(indR,2),score(indR,3),'-*g'); hold on;
-plot3(score(indO,1),score(indO,2),score(indO,3),'-*y'); hold on;
+plot3(score(indO,1),score(indO,2),score(indO,3),'-*r'); hold on;
 hold off
 legend('math','openeye','reading','closedeye')
-title('PCA plots of four activities')
+title('PCA plots of three activities')
 xlabel('pca1')
 ylabel('pca2')
 zlabel('pca3')
 grid on
 grid minor
 rotate3d on
+
+figure(12);
+indA = (2500<indx & indx<3100);
+plot3(score(indA,1),score(indA,2),score(indA,3),'-'); hold on;
+%legend('math','openeye','reading','closedeye')
+%title('PCA plots of three activities')
+%{
+for i=[1:max(C)]
+    indC = (C==i) & 2500<indx & indx<3500;
+    plot3(score(indC,1),score(indC,2),score(indC,3),'*');
+end
+%}
+plot3(score(2500:2800,1),score(2500:2800,2),score(2500:2800,3),'*r');
+plot3(score(2800:3100,1),score(2800:3100,2),score(2800:3100,3),'*b');
+
+
+%legend([1:C+1]);
+
+xlabel('pca1')
+ylabel('pca2')
+zlabel('pca3')
+grid on
+grid minor
+rotate3d on
+hold off;
+
+
+
 %{
 figure(4)
 for k=[1:4]
