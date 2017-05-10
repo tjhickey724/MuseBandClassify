@@ -1,5 +1,6 @@
+
 % This produces five plots based on the number of clusters:
-numClusters = 12;
+numClusters = 24;
 
 windowSize = 600;
 
@@ -21,7 +22,7 @@ f1 = figure(1);
 
 % Here is the code ..
 % read in the data
-all = importdata('bands.txt',' ',0);
+all = importdata('57_3.txt',' ',0);
 all = all(500:length(all),:);
 all = all(:,2:21); % throw out the first parameter which is the time in seconds
 % select a section of 1000 observations from each
@@ -65,10 +66,15 @@ grid on; grid minor;
 %C=Ctemp2;
 subplot(numg,1,pos); pos=pos+1;
 
-a1= hist(C(1:3000),0.5:numClusters-0.5);
-a2= hist(C(3000:6000),0.5:numClusters-0.5);
-a3= hist(C(6000:9000),0.5:numClusters-0.5);
-a4= hist(C(9000:length(C)),0.5:numClusters-0.5);
+%a1= hist(C(1:3000),0.5:numClusters-0.5);
+%a2= hist(C(3000:6000),0.5:numClusters-0.5);
+%a3= hist(C(6000:9000),0.5:numClusters-0.5);
+%a4= hist(C(9000:length(C)),0.5:numClusters-0.5);
+
+a1= hist(C(600:2400),0.5:numClusters-0.5);
+a2= hist(C(3600:5400),0.5:numClusters-0.5);
+a3= hist(C(6600:8400),0.5:numClusters-0.5);
+a4= hist(C(9600:11400),0.5:numClusters-0.5);
 
 aa = [a1;a2;a3;a4]';
 bar(aa./30); legend('math','relax1','reading','relax2');
@@ -114,9 +120,9 @@ xticks([0:3000:12000])
 % vectors have the most importance, and cluster on those??
 clusters = [1:numClusters];
 mathClusters = clusters(vv(1,:)==1);
-openClusters = clusters(vv(2,:)==1);
+closedClusters = clusters(vv(2,:)==1);
 readClusters = clusters(vv(3,:)==1);
-closedClusters = clusters(vv(4,:)==1);
+openClusters = clusters(vv(4,:)==1);
 title('Plot D: 1 minute smoothing of k-means classification');
 
 
@@ -125,6 +131,7 @@ title('Plot D: 1 minute smoothing of k-means classification');
 % if control passes from one to the other more than Cutoff times
 % we draw an edge between them
 % Cutoff=5
+%{
 B=zeros(numClusters,numClusters);
 for i=[1:length(C)-1]
   B(C(i),C(i+1)) = B(C(i),C(i+1))+1;
@@ -136,6 +143,9 @@ coords= [aa(:,1)-0.7*aa(:,3),aa(:,2)-0.7*aa(:,3)];
 
 Cutoff = 0;
 drawMM(aa,B,Cutoff);
+
+%}
+
 %{
 BB = B-min(B,Cutoff)+Cutoff
 BB(BB==Cutoff) = 0
@@ -270,6 +280,7 @@ hold off
 
 figure(7);
 ZZ = zeros(100,20);
+ZZ2 = zeros(0,20);
 data=ZZ;
 for k=[1:max(C)]
     data = [data;all(C==k,:);ZZ];
@@ -278,11 +289,12 @@ musePlot(data);
 
 figure(8);
 data=ZZ;
+index = [1:length(all)]
 for k=mathClusters
     data = [data;all(C==k,:);ZZ];
 end
 data = [data;ZZ;ZZ;ZZ;ZZ];
-for k=openClusters
+for k=closedClusters
     data = [data;all(C==k,:);ZZ];
 end
 data = [data;ZZ;ZZ;ZZ;ZZ];
@@ -290,38 +302,62 @@ for k=readClusters
     data = [data;all(C==k,:);ZZ];
 end
 data = [data;ZZ;ZZ;ZZ;ZZ];
-for k=closedClusters
-    data = [data;all(C==k,:);ZZ];
+data1 = []
+for k=openClusters
+    data1 = [data1;all(C==k,:);ZZ];
 end
+length(data1)
+data = [data;data1];
 musePlot(data);
+axis([0,12000,0,4]);
 
 
-figure(9)
-N = length(all);
-jd = distN(all(1:N-1,:),all(2:N,:));
-for i=[1:4]
-subplot(4,1,i);
-plot(jd(3000*(i-1)+1:min(length(jd),3000*i)))
-axis([1,3000,0,1.2])
-title('distance between samples')
+figure(17);
+data=ZZ;
+index = [1:length(all)]
+for k=mathClusters
+    data = [data;all(C==k&index<3000,:);ZZ2];
 end
-
-
-figure(10)
-g = gaps(jd,0.1);
-bar(g(1:100));
-title('frequency of runs for various cutoffs')
-%histogram(g(2:length(g)));
-
-figure(11);
-rpos=[1:30];
-gapsize=rpos.*0;
-
-for pos=rpos
-    g=gaps(jd,pos/100.0);
-    gapsize(pos) =sum(g.*[1:10000])/sum(g);
+data = [data;ZZ;ZZ;ZZ;ZZ];
+for k=closedClusters
+    data = [data;all(C==k&3000<index& index<6000,:);ZZ2];
 end
-plot(rpos./100.0,gapsize);
-title('average run length vs cutoff')
+data = [data;ZZ;ZZ;ZZ;ZZ];
+for k=readClusters
+    data = [data;all(C==k&6000<index&index<9000,:);ZZ2];
+end
+data = [data;ZZ;ZZ;ZZ;ZZ];
+data1 = []
+for k=openClusters
+    data1 = [data1;all(C==k&9000<index,:);ZZ2];
+end
+length(data1)
+data = [data;data1];
+musePlot(data);
+axis([0,12000,0,4]);
 
-    
+
+figure(18);
+data=ZZ;
+index = [1:length(all)]
+for k=[closedClusters,readClusters,openClusters]
+    data = [data;all((C==k)& (index<3000),:);ZZ2];
+end
+data = [data;ZZ;ZZ;ZZ;ZZ];
+for k=[mathClusters,readClusters,openClusters]
+    data = [data;all((C==k)& (3000<index&index<6000),:);ZZ2];
+end
+data = [data;ZZ;ZZ;ZZ;ZZ];
+for k=[mathClusters,closedClusters,openClusters]
+    data = [data;all((C==k)& (6000<index&index<9000),:);ZZ2];
+end
+data = [data;ZZ;ZZ;ZZ;ZZ];
+data2=[]
+for k=[mathClusters,closedClusters,readClusters]
+    data2 = [data2;all((C==k)& (9000<index),:);ZZ2];
+end
+length(data2)
+data = [data;data2];
+musePlot(data);
+axis([0,12000,0,4]);
+
